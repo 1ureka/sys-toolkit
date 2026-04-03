@@ -15,10 +15,24 @@ usage() {
   echo "  -h, --help       顯示此說明"
 }
 
-if [[ $# -eq 0 ]]; then
-  usage
-  exit 0
-fi
+interactive() {
+  local fmt
+  fmt=$(gum choose --header "目標格式" png jpg webp avif bmp tiff gif)
+
+  local args=("$fmt")
+
+  if gum confirm "保留原檔？" --default=No; then
+    args+=(--keep)
+  fi
+
+  local quality
+  quality=$(gum input --placeholder "輸出品質 1-100（留空=90）")
+  [[ -n "$quality" ]] && args+=(--quality "$quality")
+
+  exec "$0" "${args[@]}"
+}
+
+[[ $# -eq 0 ]] && interactive
 
 TARGET_FMT=""
 KEEP=false

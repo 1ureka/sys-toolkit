@@ -14,10 +14,23 @@ usage() {
   echo "  -h, --help  顯示此說明"
 }
 
-if [[ $# -eq 0 ]] || [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
-  usage
-  exit 0
-fi
+interactive() {
+  local target
+  target=$(gum input --placeholder "檔案名稱（或輸入 all 批次解壓）")
+
+  if [[ -z "$target" ]]; then
+    gum style --foreground 196 "必須指定檔案或 all"
+    exit 1
+  fi
+
+  exec "$0" "$target"
+}
+
+[[ $# -eq 0 ]] && interactive
+
+case "$1" in
+  -h|--help) usage; exit 0 ;;
+esac
 
 if [[ "$1" == "all" ]]; then
   found=false

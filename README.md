@@ -27,10 +27,10 @@ docker build -t sys-toolkit .
 docker run --rm -v ${PWD}:/data sys-toolkit <command> [options]
 ```
 
-執行時不帶任何參數可查看所有可用命令：
+執行時不帶任何參數會進入互動模式，需使用 `-it`：
 
 ```powershell
-docker run --rm sys-toolkit
+docker run --rm -it -v ${PWD}:/data sys-toolkit
 ```
 
 ---

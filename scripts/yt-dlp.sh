@@ -16,10 +16,29 @@ usage() {
   echo "  -h, --help           顯示此說明"
 }
 
-if [[ $# -eq 0 ]]; then
-  usage
-  exit 0
-fi
+interactive() {
+  local url
+  url=$(gum input --placeholder "輸入 URL" --width 80)
+
+  if [[ -z "$url" ]]; then
+    gum style --foreground 196 "必須提供 URL"
+    exit 1
+  fi
+
+  local args=("$url")
+
+  if gum confirm "僅下載音訊（mp3）？" --default=No; then
+    args+=(--audio-only)
+  fi
+
+  local output
+  output=$(gum input --placeholder "輸出檔名模版（留空=預設）")
+  [[ -n "$output" ]] && args+=(--output "$output")
+
+  exec "$0" "${args[@]}"
+}
+
+[[ $# -eq 0 ]] && interactive
 
 URL=""
 AUDIO_ONLY=false

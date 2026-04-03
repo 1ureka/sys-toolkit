@@ -18,16 +18,43 @@ usage() {
   echo "  -h, --help       顯示此說明"
 }
 
+interactive() {
+  local target
+  target=$(gum input --placeholder "影片檔案名（或輸入 all 批次處理）")
+
+  if [[ -z "$target" ]]; then
+    gum style --foreground 196 "必須指定影片或 all"
+    exit 1
+  fi
+
+  local args=("$target")
+
+  local n
+  n=$(gum input --placeholder "擷取幀數（留空=8）")
+  [[ -n "$n" ]] && args+=(-n "$n")
+
+  local fmt
+  fmt=$(gum choose --header "輸出格式" jpg png)
+  [[ "$fmt" != "jpg" ]] && args+=(--format "$fmt")
+
+  local prefix
+  prefix=$(gum input --placeholder "檔名前墜（留空=frame）")
+  [[ -n "$prefix" ]] && args+=(--prefix "$prefix")
+
+  local outdir
+  outdir=$(gum input --placeholder "統一輸出目錄（留空=各自子目錄）")
+  [[ -n "$outdir" ]] && args+=(--out-dir "$outdir")
+
+  exec "$0" "${args[@]}"
+}
+
+[[ $# -eq 0 ]] && interactive
+
 TARGET=""
 N=8
 PREFIX="frame"
 OUT_DIR=""
 FORMAT="jpg"
-
-if [[ $# -eq 0 ]]; then
-  usage
-  exit 0
-fi
 
 # Parse first positional arg
 case "$1" in

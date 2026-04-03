@@ -12,6 +12,22 @@ usage() {
   echo "  -h, --help         顯示此說明"
 }
 
+interactive() {
+  local args=()
+
+  local exclude
+  exclude=$(gum input --placeholder "排除資料夾前墜（例: .git）留空=不排除")
+  [[ -n "$exclude" ]] && args+=(--exclude "$exclude")
+
+  if gum confirm "找到後直接刪除？" --default=No; then
+    args+=(--delete)
+  fi
+
+  exec "$0" "${args[@]}"
+}
+
+[[ $# -eq 0 ]] && interactive
+
 DELETE=false
 EXCLUDE=""
 

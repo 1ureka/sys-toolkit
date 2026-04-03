@@ -14,6 +14,30 @@ usage() {
   echo "  -h, --help         顯示此說明"
 }
 
+interactive() {
+  local args=()
+
+  local ext
+  ext=$(gum input --placeholder "副檔名篩選（例: py,js,ts）留空=全部")
+  [[ -n "$ext" ]] && args+=(--ext "$ext")
+
+  local exclude
+  exclude=$(gum input --placeholder "排除資料夾前墜（例: node_modules）留空=不排除")
+  [[ -n "$exclude" ]] && args+=(--exclude "$exclude")
+
+  local min
+  min=$(gum input --placeholder "最少行數（留空=1）")
+  [[ -n "$min" ]] && args+=(--min-lines "$min")
+
+  if gum confirm "以副檔名分組統計？" --default=No; then
+    args+=(--summary)
+  fi
+
+  exec "$0" "${args[@]}"
+}
+
+[[ $# -eq 0 ]] && interactive
+
 EXCLUDE=""
 EXT=""
 MIN_LINES=1
