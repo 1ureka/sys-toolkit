@@ -66,15 +66,9 @@ if [[ -n "$EXCLUDE" ]]; then
 fi
 FIND_CMD+=(-type f -print)
 
-# Build extension filter for grep
+# Extension filter flag
 EXT_PATTERN=""
 if [[ -n "$EXT" ]]; then
-  IFS=',' read -ra EXTS <<< "$EXT"
-  patterns=()
-  for e in "${EXTS[@]}"; do
-    e=$(echo "$e" | tr -d ' .' | tr '[:upper:]' '[:lower:]')
-    patterns+=("-e" "\\.${e}$")
-  done
   EXT_PATTERN="yes"
 fi
 
@@ -109,7 +103,7 @@ while IFS= read -r file; do
   rel=".${file#/data}"
   file_ext="${file##*.}"
   file_ext=$(echo "$file_ext" | tr '[:upper:]' '[:lower:]')
-  [[ "$file" != *.* ]] && file_ext="(no ext)"
+  [[ "$file" != *.* ]] && file_ext="_no_ext_"
 
   TOTAL_FILES=$((TOTAL_FILES + 1))
   TOTAL_LINES=$((TOTAL_LINES + lines))
@@ -138,7 +132,7 @@ if [[ "$SUMMARY" == true ]]; then
   for ext in "${!ext_lines[@]}"; do
     echo "${ext_lines[$ext]} $ext ${ext_files[$ext]}"
   done | sort -rn | while read -r tl ext fc; do
-    if [[ "$ext" == "(no" ]]; then
+    if [[ "$ext" == "_no_ext_" ]]; then
       printf '%-12s %8d %12d\n' "(no ext)" "$fc" "$tl"
     else
       printf '%-12s %8d %12d\n' ".$ext" "$fc" "$tl"

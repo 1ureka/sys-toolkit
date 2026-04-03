@@ -63,12 +63,6 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ -z "$URL" ]]; then
-  echo "錯誤: 請提供 URL"
-  usage
-  exit 1
-fi
-
 ARGS=(
   --no-warnings
   -o "/data/$OUTPUT"

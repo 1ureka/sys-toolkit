@@ -112,12 +112,7 @@ extract_frames() {
     return
   fi
 
-  local output_pattern
   if [[ -n "$OUT_DIR" ]]; then
-    output_pattern="$dest/${PREFIX}_$(printf '%04d' $COUNTER)_%04d.${FORMAT}"
-    # Use a simpler approach: sequential naming in unified dir
-    output_pattern="$dest/${PREFIX}_%04d.${FORMAT}"
-    # We need to offset the counter for batch mode in unified dir
     local start_num=$COUNTER
     ffmpeg -i "$f" -vf "fps=$N/$dur" -frames:v "$N" \
       "${QUALITY_FLAG[@]}" \
@@ -128,7 +123,7 @@ extract_frames() {
   else
     ffmpeg -i "$f" -vf "fps=$N/$dur" -frames:v "$N" \
       "${QUALITY_FLAG[@]}" \
-      "$dest/${PREFIX}_%03d.${FORMAT}" \
+      "$dest/${PREFIX}_%04d.${FORMAT}" \
       -y -loglevel warning
   fi
 

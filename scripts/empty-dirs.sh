@@ -40,14 +40,6 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-FIND_ARGS=(-mindepth 1 -type d -empty)
-
-if [[ -n "$EXCLUDE" ]]; then
-  FIND_ARGS=(-mindepth 1 -name "${EXCLUDE}*" -prune -o -type d -empty -print)
-else
-  FIND_ARGS=(-mindepth 1 -type d -empty)
-fi
-
 echo "掃描空資料夾..."
 
 if [[ -n "$EXCLUDE" ]]; then
