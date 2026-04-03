@@ -1,6 +1,21 @@
 #!/bin/bash
 set -euo pipefail
 
+usage() {
+  echo "用法: sys-toolkit <command> [options]"
+  echo ""
+  echo "可用指令:"
+  echo "  count-lines   統計目錄下所有檔案的行數"
+  echo "  empty-dirs    檢查空資料夾"
+  echo "  extract       快速解壓縮"
+  echo "  img-convert   圖像格式轉換"
+  echo "  video-frames  影像擷取"
+  echo "  yt-dlp        下載公開影音資源"
+  echo ""
+  echo "不帶參數執行會進入互動模式。"
+  echo "各指令可加 --help 查看詳細用法。"
+}
+
 run_interactive_menu() {
   gum style \
     --border rounded --padding "0 2" --margin "1 0" \
@@ -19,6 +34,7 @@ run_interactive_menu() {
 }
 
 case "${1:-}" in
+  -h|--help)     usage; exit 0 ;;
   count-lines)   shift; exec /scripts/count-lines.sh "$@" ;;
   empty-dirs)    shift; exec /scripts/empty-dirs.sh "$@" ;;
   extract)       shift; exec /scripts/extract.sh "$@" ;;
