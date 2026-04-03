@@ -7,7 +7,7 @@ usage() {
   echo "用法: sys-toolkit count-lines [OPTIONS]"
   echo ""
   echo "選項:"
-  echo "  --exclude <prefix> 跳過名稱以此前墜開頭的資料夾"
+  echo "  --exclude <p1,p2>  跳過名稱以此前墜開頭的資料夾（逗號分隔或多次指定）"
   echo "  --ext <ext1,ext2>  僅計算指定副檔名"
   echo "  --min-lines <n>    低於此行數的檔案不顯示 (預設: 1)"
   echo "  --summary          以副檔名分組統計"
@@ -22,7 +22,7 @@ interactive() {
   [[ -n "$ext" ]] && args+=(--ext "$ext")
 
   local exclude
-  exclude=$(gum input --placeholder "排除資料夾前墜（例: node_modules）留空=不排除")
+  exclude=$(gum input --placeholder "排除資料夾前墜（例: node_modules,.git）逗號分隔，留空=不排除")
   [[ -n "$exclude" ]] && args+=(--exclude "$exclude")
 
   local min
@@ -38,14 +38,20 @@ interactive() {
 
 [[ "${1:-}" == "--interactive" ]] && interactive
 
-EXCLUDE=""
+EXCLUDES=()
 EXT=""
 MIN_LINES=1
 SUMMARY=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --exclude)   EXCLUDE="$2"; shift 2 ;;
+    --exclude)
+      IFS=',' read -ra _EX <<< "$2"
+      for _e in "${_EX[@]}"; do
+        _e=$(echo "$_e" | xargs)  # trim whitespace
+        [[ -n "$_e" ]] && EXCLUDES+=("$_e")
+      done
+      shift 2 ;;
     --ext)       EXT="$2"; shift 2 ;;
     --min-lines) MIN_LINES="$2"; shift 2 ;;
     --summary)   SUMMARY=true; shift ;;
@@ -55,14 +61,20 @@ while [[ $# -gt 0 ]]; do
 done
 
 echo "統計檔案行數..."
-[[ -n "$EXCLUDE" ]] && echo "排除資料夾: $EXCLUDE"
+[[ ${#EXCLUDES[@]} -gt 0 ]] && echo "排除資料夾: ${EXCLUDES[*]}"
 [[ -n "$EXT" ]] && echo "篩選副檔名: $EXT"
 echo "最低行數: $MIN_LINES"
 
 # Build find command with exclusion
 FIND_CMD=(find /data -mindepth 1)
-if [[ -n "$EXCLUDE" ]]; then
-  FIND_CMD+=(-name "${EXCLUDE}*" -prune -o)
+if [[ ${#EXCLUDES[@]} -gt 0 ]]; then
+  FIND_CMD+=('(')
+  first=true
+  for prefix in "${EXCLUDES[@]}"; do
+    [[ "$first" == true ]] && first=false || FIND_CMD+=(-o)
+    FIND_CMD+=(-name "${prefix}*")
+  done
+  FIND_CMD+=(')' -prune -o)
 fi
 FIND_CMD+=(-type f -print)
 
