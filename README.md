@@ -49,6 +49,9 @@ docker run --rm -v ${PWD}:/data sys-toolkit count-lines --ext py,js,ts
 # 排除 node_modules 開頭的資料夾
 docker run --rm -v ${PWD}:/data sys-toolkit count-lines --exclude node_modules
 
+# 同時排除多個資料夾
+docker run --rm -v ${PWD}:/data sys-toolkit count-lines --exclude node_modules,.git,dist
+
 # 以副檔名分組統計
 docker run --rm -v ${PWD}:/data sys-toolkit count-lines --ext py,js --summary
 
@@ -56,12 +59,12 @@ docker run --rm -v ${PWD}:/data sys-toolkit count-lines --ext py,js --summary
 docker run --rm -v ${PWD}:/data sys-toolkit count-lines --min-lines 100
 ```
 
-| 參數                 | 說明                           | 預設 |
-| -------------------- | ------------------------------ | ---- |
-| `--exclude <prefix>` | 跳過名稱以此前墜開頭的資料夾   | 無   |
-| `--ext <ext1,ext2>`  | 僅計算指定副檔名（逗號分隔）   | 全部 |
-| `--min-lines <n>`    | 低於此行數的檔案不顯示         | 1    |
-| `--summary`          | 以副檔名分組統計，而非逐檔列出 | 否   |
+| 參數                | 說明                           | 預設 |
+| ------------------- | ------------------------------ | ---- |
+| `--exclude <p1,p2>` | 跳過名稱以此前墜開頭的資料夾   | 無   |
+| `--ext <ext1,ext2>` | 僅計算指定副檔名               | 全部 |
+| `--min-lines <n>`   | 低於此行數的檔案不顯示         | 1    |
+| `--summary`         | 以副檔名分組統計，而非逐檔列出 | 否   |
 
 ---
 
@@ -78,31 +81,36 @@ docker run --rm -v ${PWD}:/data sys-toolkit empty-dirs --delete
 
 # 排除 .git 開頭的資料夾
 docker run --rm -v ${PWD}:/data sys-toolkit empty-dirs --exclude .git
+
+# 同時排除多個資料夾
+docker run --rm -v ${PWD}:/data sys-toolkit empty-dirs --exclude .git,node_modules
 ```
 
-| 參數                 | 說明                         | 預設         |
-| -------------------- | ---------------------------- | ------------ |
-| `--delete`           | 找到空資料夾後直接刪除       | 否（僅列出） |
-| `--exclude <prefix>` | 跳過名稱以此前墜開頭的資料夾 | 無           |
+| 參數                | 說明                         | 預設         |
+| ------------------- | ---------------------------- | ------------ |
+| `--delete`          | 找到空資料夾後直接刪除       | 否（僅列出） |
+| `--exclude <p1,p2>` | 跳過名稱以此前墜開頭的資料夾 | 無           |
 
 ---
 
 ## extract — 快速解壓縮
 
-利用 7-Zip 解壓各種壓縮格式，支援單檔與批次模式。
+利用 7-Zip 解壓各種壓縮格式，支援單檔與批次模式。所有檔案皆解壓至同名子目錄，避免檔案散落。
 
 ```powershell
-# 解壓單一檔案
+# 解壓單一檔案（解壓至同名子目錄）
 docker run --rm -v ${PWD}:/data sys-toolkit extract archive.zip
 
-# 批次解壓所有壓縮檔（各自解壓至同名子目錄）
+# 批次解壓所有壓縮檔（僅處理已知壓縮格式）
 docker run --rm -v ${PWD}:/data sys-toolkit extract all
 ```
 
-| 參數     | 說明                                     |
-| -------- | ---------------------------------------- |
-| `<file>` | 解壓指定檔案                             |
-| `all`    | 解壓目錄下所有檔案，每個解壓至同名子目錄 |
+| 參數     | 說明                                           |
+| -------- | ---------------------------------------------- |
+| `<file>` | 解壓指定檔案至同名子目錄                       |
+| `all`    | 解壓目錄下所有已知壓縮檔，每個解壓至同名子目錄 |
+
+**支援的壓縮格式：** zip, 7z, tar, gz, bz2, xz, rar, tgz, tbz2, txz, zst, lz4, cab, iso
 
 ---
 
