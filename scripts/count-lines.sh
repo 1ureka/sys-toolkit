@@ -1,0 +1,129 @@
+#!/bin/bash
+set -euo pipefail
+
+# count-lines — 統計檔案行數
+
+usage() {
+  echo "用法: sys-toolkit count-lines [OPTIONS]"
+  echo ""
+  echo "選項:"
+  echo "  --exclude <prefix> 跳過名稱以此前墜開頭的資料夾"
+  echo "  --ext <ext1,ext2>  僅計算指定副檔名"
+  echo "  --min-lines <n>    低於此行數的檔案不顯示 (預設: 1)"
+  echo "  --summary          以副檔名分組統計"
+  echo "  -h, --help         顯示此說明"
+}
+
+EXCLUDE=""
+EXT=""
+MIN_LINES=1
+SUMMARY=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --exclude)   EXCLUDE="$2"; shift 2 ;;
+    --ext)       EXT="$2"; shift 2 ;;
+    --min-lines) MIN_LINES="$2"; shift 2 ;;
+    --summary)   SUMMARY=true; shift ;;
+    -h|--help)   usage; exit 0 ;;
+    *) echo "未知參數: $1"; usage; exit 1 ;;
+  esac
+done
+
+echo "統計檔案行數..."
+[[ -n "$EXCLUDE" ]] && echo "排除資料夾: $EXCLUDE"
+[[ -n "$EXT" ]] && echo "篩選副檔名: $EXT"
+echo "最低行數: $MIN_LINES"
+
+# Build find command with exclusion
+FIND_CMD=(find /data -mindepth 1)
+if [[ -n "$EXCLUDE" ]]; then
+  FIND_CMD+=(-name "${EXCLUDE}*" -prune -o)
+fi
+FIND_CMD+=(-type f -print)
+
+# Build extension filter for grep
+EXT_PATTERN=""
+if [[ -n "$EXT" ]]; then
+  IFS=',' read -ra EXTS <<< "$EXT"
+  patterns=()
+  for e in "${EXTS[@]}"; do
+    e=$(echo "$e" | tr -d ' .' | tr '[:upper:]' '[:lower:]')
+    patterns+=("-e" "\\.${e}$")
+  done
+  EXT_PATTERN="yes"
+fi
+
+# Collect files and count lines
+declare -A ext_files ext_lines
+TOTAL_FILES=0
+TOTAL_LINES=0
+RESULTS=""
+
+while IFS= read -r file; do
+  # Extension filter
+  if [[ -n "$EXT_PATTERN" ]]; then
+    file_lower=$(echo "$file" | tr '[:upper:]' '[:lower:]')
+    matched=false
+    IFS=',' read -ra EXTS <<< "$EXT"
+    for e in "${EXTS[@]}"; do
+      e=$(echo "$e" | tr -d ' .' | tr '[:upper:]' '[:lower:]')
+      if [[ "$file_lower" == *".${e}" ]]; then
+        matched=true
+        break
+      fi
+    done
+    [[ "$matched" == false ]] && continue
+  fi
+
+  # Count lines
+  lines=$(wc -l < "$file" 2>/dev/null || echo 0)
+  lines=$((lines + 0))  # ensure numeric
+
+  [[ $lines -lt $MIN_LINES ]] && continue
+
+  rel=".${file#/data}"
+  file_ext="${file##*.}"
+  file_ext=$(echo "$file_ext" | tr '[:upper:]' '[:lower:]')
+  [[ "$file" != *.* ]] && file_ext="(no ext)"
+
+  TOTAL_FILES=$((TOTAL_FILES + 1))
+  TOTAL_LINES=$((TOTAL_LINES + lines))
+
+  if [[ "$SUMMARY" == true ]]; then
+    ext_files["$file_ext"]=$(( ${ext_files["$file_ext"]:-0} + 1 ))
+    ext_lines["$file_ext"]=$(( ${ext_lines["$file_ext"]:-0} + lines ))
+  else
+    RESULTS="${RESULTS}$(printf '%6d  %s\n' "$lines" "$rel")"$'\n'
+  fi
+done < <("${FIND_CMD[@]}" 2>/dev/null || true)
+
+if [[ $TOTAL_FILES -eq 0 ]]; then
+  echo ""
+  echo "未找到符合條件的檔案。"
+  exit 0
+fi
+
+if [[ "$SUMMARY" == true ]]; then
+  echo ""
+  echo "--- 依副檔名統計 ---"
+  printf '%-12s %8s %12s\n' "Extension" "Files" "TotalLines"
+  printf '%-12s %8s %12s\n' "---------" "-----" "----------"
+
+  # Sort by total lines descending
+  for ext in "${!ext_lines[@]}"; do
+    echo "${ext_lines[$ext]} $ext ${ext_files[$ext]}"
+  done | sort -rn | while read -r tl ext fc; do
+    if [[ "$ext" == "(no" ]]; then
+      printf '%-12s %8d %12d\n' "(no ext)" "$fc" "$tl"
+    else
+      printf '%-12s %8d %12d\n' ".$ext" "$fc" "$tl"
+    fi
+  done
+else
+  echo ""
+  echo "$RESULTS" | sort -rn | head -n -1
+fi
+
+echo ""
+echo "--- 共計: $TOTAL_FILES 個檔案, $TOTAL_LINES 行 ---"
