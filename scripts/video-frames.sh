@@ -48,7 +48,7 @@ interactive() {
   exec "$0" "${args[@]}"
 }
 
-[[ $# -eq 0 ]] && interactive
+[[ "${1:-}" == "--interactive" ]] && interactive
 
 TARGET=""
 N=8
@@ -57,8 +57,9 @@ OUT_DIR=""
 FORMAT="jpg"
 
 # Parse first positional arg
-case "$1" in
+case "${1:-}" in
   -h|--help) usage; exit 0 ;;
+  "") echo "錯誤: 請指定影片或 all"; usage; exit 1 ;;
   *) TARGET="$1"; shift ;;
 esac
 

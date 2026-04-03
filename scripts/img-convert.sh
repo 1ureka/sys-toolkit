@@ -32,15 +32,16 @@ interactive() {
   exec "$0" "${args[@]}"
 }
 
-[[ $# -eq 0 ]] && interactive
+[[ "${1:-}" == "--interactive" ]] && interactive
 
 TARGET_FMT=""
 KEEP=false
 QUALITY=90
 
 # Parse first positional arg
-case "$1" in
+case "${1:-}" in
   -h|--help) usage; exit 0 ;;
+  "") echo "錯誤: 請指定目標格式"; usage; exit 1 ;;
   *) TARGET_FMT=$(echo "$1" | tr '[:upper:]' '[:lower:]'); shift ;;
 esac
 

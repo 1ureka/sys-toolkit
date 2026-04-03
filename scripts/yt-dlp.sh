@@ -38,7 +38,7 @@ interactive() {
   exec "$0" "${args[@]}"
 }
 
-[[ $# -eq 0 ]] && interactive
+[[ "${1:-}" == "--interactive" ]] && interactive
 
 URL=""
 AUDIO_ONLY=false
@@ -46,8 +46,9 @@ FORMAT="bestvideo[vcodec^=avc1]+bestaudio[acodec^=mp4a]/bestvideo[vcodec^=avc1]+
 OUTPUT="%(title)s.%(ext)s"
 
 # Parse first positional arg
-case "$1" in
+case "${1:-}" in
   -h|--help) usage; exit 0 ;;
+  "") echo "錯誤: 請提供 URL"; usage; exit 1 ;;
   *) URL="$1"; shift ;;
 esac
 

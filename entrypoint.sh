@@ -15,7 +15,7 @@ run_interactive_menu() {
     "video-frames — 影像擷取" \
     "yt-dlp       — 下載公開影音資源")
 
-  exec /scripts/"${cmd%% *}".sh
+  exec /scripts/"${cmd%% *}".sh --interactive
 }
 
 case "${1:-}" in

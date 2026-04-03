@@ -26,10 +26,11 @@ interactive() {
   exec "$0" "$target"
 }
 
-[[ $# -eq 0 ]] && interactive
+[[ "${1:-}" == "--interactive" ]] && interactive
 
-case "$1" in
+case "${1:-}" in
   -h|--help) usage; exit 0 ;;
+  "") echo "錯誤: 請指定檔案或 all"; usage; exit 1 ;;
 esac
 
 if [[ "$1" == "all" ]]; then

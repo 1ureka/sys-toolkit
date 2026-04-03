@@ -36,7 +36,7 @@ interactive() {
   exec "$0" "${args[@]}"
 }
 
-[[ $# -eq 0 ]] && interactive
+[[ "${1:-}" == "--interactive" ]] && interactive
 
 EXCLUDE=""
 EXT=""
