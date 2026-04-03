@@ -40,7 +40,7 @@ if [[ "$1" == "all" ]]; then
       found=true
       name=$(basename "$f")
       echo "解壓中: $name"
-      7z x "$f" -o* -y || echo "  警告: $name 解壓失敗或非壓縮檔"
+      7zz x "$f" -o* -y || echo "  警告: $name 解壓失敗或非壓縮檔"
     fi
   done
   if [[ "$found" == false ]]; then
@@ -53,5 +53,5 @@ else
     exit 1
   fi
   echo "解壓中: $1"
-  7z x "$file" -y
+  7zz x "$file" -y
 fi
