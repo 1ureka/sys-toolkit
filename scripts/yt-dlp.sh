@@ -11,7 +11,7 @@ usage() {
   echo ""
   echo "選項:"
   echo "  --audio-only         僅下載音訊並轉為 mp3"
-  echo "  --format <id>        指定 yt-dlp format (預設: bestvideo+bestaudio/best)"
+  echo "  --format <id>        指定 yt-dlp format (預設: H.264+AAC 優先)"
   echo "  --output <template>  輸出檔名模版 (預設: %(title)s.%(ext)s)"
   echo "  -h, --help           顯示此說明"
 }
@@ -23,7 +23,7 @@ fi
 
 URL=""
 AUDIO_ONLY=false
-FORMAT="bestvideo+bestaudio/best"
+FORMAT="bestvideo[vcodec^=avc1]+bestaudio[acodec^=mp4a]/bestvideo[vcodec^=avc1]+bestaudio/bestvideo+bestaudio/best"
 OUTPUT="%(title)s.%(ext)s"
 
 # Parse first positional arg
@@ -64,6 +64,7 @@ else
   ARGS+=(
     -f "$FORMAT"
     --merge-output-format mp4
+    --postprocessor-args "Merger+ffmpeg:-c:v copy -c:a aac -b:a 192k"
   )
 fi
 
