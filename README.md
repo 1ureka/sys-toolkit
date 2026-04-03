@@ -4,14 +4,14 @@
 
 ## 功能概覽
 
-| 功能 | 說明 |
-|---|---|
-| `count-lines` | 統計目錄下所有檔案的行數，支援副檔名篩選與分組統計 |
-| `empty-dirs` | 檢查空資料夾。git 切換分支後有時會殘留空資料夾，可用此工具檢查並清理 |
-| `extract` | 快速解壓縮，支援 zip、7z、tar、gz、rar 等常見格式，可批次解壓至各自子目錄 |
-| `img-convert` | 將目錄下的圖像檔案批次轉換為指定格式（png、jpg、webp、avif 等） |
-| `video-frames` | 從影片中均勻擷取指定數量的幀，可批次處理並指定統一輸出目錄與命名前墜 |
-| `yt-dlp` | yt-dlp 包裝，用來下載公開影音資源，不支援需登入的情況 |
+| 功能           | 說明                                                                      |
+| -------------- | ------------------------------------------------------------------------- |
+| `count-lines`  | 統計目錄下所有檔案的行數，支援副檔名篩選與分組統計                        |
+| `empty-dirs`   | 檢查空資料夾。git 切換分支後有時會殘留空資料夾，可用此工具檢查並清理      |
+| `extract`      | 快速解壓縮，支援 zip、7z、tar、gz、rar 等常見格式，可批次解壓至各自子目錄 |
+| `img-convert`  | 將目錄下的圖像檔案批次轉換為指定格式（png、jpg、webp、avif 等）           |
+| `video-frames` | 從影片中均勻擷取指定數量的幀，可批次處理並指定統一輸出目錄與命名前墜      |
+| `yt-dlp`       | yt-dlp 包裝，用來下載公開影音資源，不支援需登入的情況                     |
 
 ## 安裝與使用
 
@@ -56,12 +56,12 @@ docker run --rm -v ${PWD}:/data sys-toolkit count-lines --ext py,js --summary
 docker run --rm -v ${PWD}:/data sys-toolkit count-lines --min-lines 100
 ```
 
-| 參數 | 說明 | 預設 |
-|---|---|---|
-| `--exclude <prefix>` | 跳過名稱以此前墜開頭的資料夾 | 無 |
-| `--ext <ext1,ext2>` | 僅計算指定副檔名（逗號分隔） | 全部 |
-| `--min-lines <n>` | 低於此行數的檔案不顯示 | 1 |
-| `--summary` | 以副檔名分組統計，而非逐檔列出 | 否 |
+| 參數                 | 說明                           | 預設 |
+| -------------------- | ------------------------------ | ---- |
+| `--exclude <prefix>` | 跳過名稱以此前墜開頭的資料夾   | 無   |
+| `--ext <ext1,ext2>`  | 僅計算指定副檔名（逗號分隔）   | 全部 |
+| `--min-lines <n>`    | 低於此行數的檔案不顯示         | 1    |
+| `--summary`          | 以副檔名分組統計，而非逐檔列出 | 否   |
 
 ---
 
@@ -80,10 +80,10 @@ docker run --rm -v ${PWD}:/data sys-toolkit empty-dirs --delete
 docker run --rm -v ${PWD}:/data sys-toolkit empty-dirs --exclude .git
 ```
 
-| 參數 | 說明 | 預設 |
-|---|---|---|
-| `--delete` | 找到空資料夾後直接刪除 | 否（僅列出） |
-| `--exclude <prefix>` | 跳過名稱以此前墜開頭的資料夾 | 無 |
+| 參數                 | 說明                         | 預設         |
+| -------------------- | ---------------------------- | ------------ |
+| `--delete`           | 找到空資料夾後直接刪除       | 否（僅列出） |
+| `--exclude <prefix>` | 跳過名稱以此前墜開頭的資料夾 | 無           |
 
 ---
 
@@ -99,10 +99,10 @@ docker run --rm -v ${PWD}:/data sys-toolkit extract archive.zip
 docker run --rm -v ${PWD}:/data sys-toolkit extract all
 ```
 
-| 參數 | 說明 |
-|---|---|
-| `<file>` | 解壓指定檔案 |
-| `all` | 解壓目錄下所有檔案，每個解壓至同名子目錄 |
+| 參數     | 說明                                     |
+| -------- | ---------------------------------------- |
+| `<file>` | 解壓指定檔案                             |
+| `all`    | 解壓目錄下所有檔案，每個解壓至同名子目錄 |
 
 ---
 
@@ -121,11 +121,11 @@ docker run --rm -v ${PWD}:/data sys-toolkit img-convert png --keep
 docker run --rm -v ${PWD}:/data sys-toolkit img-convert jpg --quality 80
 ```
 
-| 參數 | 說明 | 預設 |
-|---|---|---|
-| `<target-format>` | 目標格式：png, jpg, webp, avif, bmp, tiff, gif | 必填 |
-| `--keep` | 轉換後保留原檔 | 否（刪除原檔） |
-| `--quality <n>` | 輸出品質 1-100 | 90 |
+| 參數              | 說明                                           | 預設           |
+| ----------------- | ---------------------------------------------- | -------------- |
+| `<target-format>` | 目標格式：png, jpg, webp, avif, bmp, tiff, gif | 必填           |
+| `--keep`          | 轉換後保留原檔                                 | 否（刪除原檔） |
+| `--quality <n>`   | 輸出品質 1-100                                 | 90             |
 
 > 注意：預設行為會刪除原檔，請確認後再執行。加 `--keep` 可保留原檔。
 
@@ -149,13 +149,13 @@ docker run --rm -v ${PWD}:/data sys-toolkit video-frames all -n 16 --out-dir fra
 docker run --rm -v ${PWD}:/data sys-toolkit video-frames clip.mp4 -n 8 --format png
 ```
 
-| 參數 | 說明 | 預設 |
-|---|---|---|
-| `<file\|all>` | 指定影片或批次處理所有影片 | 必填 |
-| `-n <count>` | 擷取幀數 | 8 |
-| `--prefix <name>` | 輸出檔名前墜 | `frame` |
-| `--out-dir <dir>` | 統一輸出目錄（否則每個影片各自子目錄） | 無 |
-| `--format <ext>` | 輸出格式 jpg 或 png | jpg |
+| 參數              | 說明                                   | 預設    |
+| ----------------- | -------------------------------------- | ------- |
+| `<file\|all>`     | 指定影片或批次處理所有影片             | 必填    |
+| `-n <count>`      | 擷取幀數                               | 8       |
+| `--prefix <name>` | 輸出檔名前墜                           | `frame` |
+| `--out-dir <dir>` | 統一輸出目錄（否則每個影片各自子目錄） | 無      |
+| `--format <ext>`  | 輸出格式 jpg 或 png                    | jpg     |
 
 **輸出目錄結構（預設）：**
 
@@ -189,11 +189,11 @@ docker run --rm -v ${PWD}:/data sys-toolkit yt-dlp "https://example.com/video" -
 docker run --rm -v ${PWD}:/data sys-toolkit yt-dlp "https://example.com/video" --output "my_video.%(ext)s"
 ```
 
-| 參數 | 說明 | 預設 |
-|---|---|---|
-| `<url>` | 目標 URL | 必填 |
-| `--audio-only` | 僅下載音訊並轉為 mp3 | 否 |
-| `--format <id>` | 指定 yt-dlp format | `bestvideo+bestaudio/best` |
-| `--output <template>` | 輸出檔名模版 | `%(title)s.%(ext)s` |
+| 參數                  | 說明                 | 預設                       |
+| --------------------- | -------------------- | -------------------------- |
+| `<url>`               | 目標 URL             | 必填                       |
+| `--audio-only`        | 僅下載音訊並轉為 mp3 | 否                         |
+| `--format <id>`       | 指定 yt-dlp format   | `bestvideo+bestaudio/best` |
+| `--output <template>` | 輸出檔名模版         | `%(title)s.%(ext)s`        |
 
 > 注意：此工具不支援需要登入或 cookie 的內容，僅適用於公開資源。
