@@ -201,7 +201,7 @@ docker run --rm -v ${PWD}:/data sys-toolkit yt-dlp "https://example.com/video" -
 | --------------------- | -------------------- | -------------------------- |
 | `<url>`               | 目標 URL             | 必填                       |
 | `--audio-only`        | 僅下載音訊並轉為 mp3 | 否                         |
-| `--format <id>`       | 指定 yt-dlp format   | `bestvideo+bestaudio/best` |
+| `--format <id>`       | 指定 yt-dlp format   | 參考 [yt-dlp.sh](./scripts/yt-dlp.sh) |
 | `--output <template>` | 輸出檔名模版         | `%(title)s.%(ext)s`        |
 
 > 注意：此工具不支援需要登入或 cookie 的內容，僅適用於公開資源。
