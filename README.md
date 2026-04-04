@@ -170,11 +170,11 @@ docker run --rm -v ${PWD}:/data sys-toolkit video-frames clip.mp4 -n 8 --format 
 ```
 ./
 ├── clip/
-│   ├── frame_001.jpg
-│   ├── frame_002.jpg
+│   ├── frame_0001.jpg
+│   ├── frame_0002.jpg
 │   └── ...
 └── another/
-    ├── frame_001.jpg
+    ├── frame_0001.jpg
     └── ...
 ```
 

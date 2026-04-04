@@ -34,6 +34,7 @@ run_interactive_menu() {
 }
 
 case "${1:-}" in
+  "")            run_interactive_menu ;;
   -h|--help)     usage; exit 0 ;;
   count-lines)   shift; exec /scripts/count-lines.sh "$@" ;;
   empty-dirs)    shift; exec /scripts/empty-dirs.sh "$@" ;;
@@ -41,5 +42,5 @@ case "${1:-}" in
   img-convert)   shift; exec /scripts/img-convert.sh "$@" ;;
   video-frames)  shift; exec /scripts/video-frames.sh "$@" ;;
   yt-dlp)        shift; exec /scripts/yt-dlp.sh "$@" ;;
-  *)             run_interactive_menu ;;
+  *)             echo "未知指令: $1"; usage; exit 1 ;;
 esac
