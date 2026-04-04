@@ -17,13 +17,33 @@ usage() {
 interactive() {
   local args=()
 
-  local ext
-  ext=$(gum input --placeholder "副檔名篩選（例: py,js,ts）留空=全部")
-  [[ -n "$ext" ]] && args+=(--ext "$ext")
+  local preset
+  preset=$(gum choose --header "選擇預設組合" \
+    "Web 前端    — js,ts,jsx,tsx,css,html  排除 node_modules,dist,.git" \
+    "Python      — py                      排除 __pycache__,.git,venv" \
+    "全部檔案    — 不篩選副檔名            排除 .git" \
+    "其他        — 自訂所有選項")
 
-  local exclude
-  exclude=$(gum input --placeholder "排除資料夾前墜（例: node_modules,.git）逗號分隔，留空=不排除")
-  [[ -n "$exclude" ]] && args+=(--exclude "$exclude")
+  case "$preset" in
+    Web*)
+      args=(--ext "js,ts,jsx,tsx,css,html" --exclude "node_modules,dist,.git")
+      ;;
+    Python*)
+      args=(--ext "py" --exclude "__pycache__,.git,venv")
+      ;;
+    全部*)
+      args=(--exclude ".git")
+      ;;
+    其他*)
+      local ext
+      ext=$(gum input --placeholder "副檔名篩選（例: py,js,ts）留空=全部")
+      [[ -n "$ext" ]] && args+=(--ext "$ext")
+
+      local exclude
+      exclude=$(gum input --placeholder "排除資料夾前墜（例: node_modules,.git）逗號分隔，留空=不排除")
+      [[ -n "$exclude" ]] && args+=(--exclude "$exclude")
+      ;;
+  esac
 
   local min
   min=$(gum input --placeholder "最少行數（留空=1）")
