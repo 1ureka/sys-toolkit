@@ -4,10 +4,10 @@ set -euo pipefail
 # yt-dlp — 下載公開影音資源
 
 usage() {
-  echo "用法: sys-toolkit yt-dlp <url> [OPTIONS]"
+  echo "用法: sys-toolkit yt-dlp <url[,url2,...]> [OPTIONS]"
   echo ""
   echo "參數:"
-  echo "  <url>  目標 URL (僅支援公開資源)"
+  echo "  <url>  目標 URL，多個以逗號分隔 (僅支援公開資源)"
   echo ""
   echo "選項:"
   echo "  --audio-only         僅下載音訊並轉為 mp3"
@@ -18,7 +18,7 @@ usage() {
 
 interactive() {
   local url
-  url=$(gum input --placeholder "輸入 URL" --width 80)
+  url=$(gum input --placeholder "輸入 URL（多個以逗號分隔）" --width 80)
 
   if [[ -z "$url" ]]; then
     gum style --foreground 196 "必須提供 URL"
@@ -40,7 +40,7 @@ interactive() {
 
 [[ "${1:-}" == "--interactive" ]] && interactive
 
-URL=""
+URLS=()
 AUDIO_ONLY=false
 FORMAT="bestvideo[vcodec^=avc1]+bestaudio[acodec^=mp4a]/bestvideo[vcodec^=avc1]+bestaudio/bestvideo+bestaudio/best"
 OUTPUT="%(title)s.%(ext)s"
@@ -49,7 +49,7 @@ OUTPUT="%(title)s.%(ext)s"
 case "${1:-}" in
   -h|--help) usage; exit 0 ;;
   "") echo "錯誤: 請提供 URL"; usage; exit 1 ;;
-  *) URL="$1"; shift ;;
+  *) IFS=',' read -ra URLS <<< "$1"; shift ;;
 esac
 
 # Parse options
@@ -82,6 +82,22 @@ else
   )
 fi
 
-echo "下載中: $URL"
-yt-dlp "${ARGS[@]}" "$URL"
-echo "下載完成。"
+TOTAL=${#URLS[@]}
+FAILED=0
+for i in "${!URLS[@]}"; do
+  url="${URLS[$i]}"
+  echo "[$((i+1))/$TOTAL] 下載中: $url"
+  if yt-dlp "${ARGS[@]}" "$url"; then
+    echo "[$((i+1))/$TOTAL] 下載完成。"
+  else
+    echo "[$((i+1))/$TOTAL] 下載失敗: $url"
+    ((FAILED++))
+  fi
+done
+
+if [[ $FAILED -gt 0 ]]; then
+  echo "全部完成，$FAILED/$TOTAL 個失敗。"
+  exit 1
+else
+  echo "全部完成，共 $TOTAL 個。"
+fi
