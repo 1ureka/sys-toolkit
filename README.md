@@ -127,6 +127,12 @@ docker run --rm -v ${PWD}:/data sys-toolkit img-convert png --keep
 
 # 轉為 jpg 並指定品質
 docker run --rm -v ${PWD}:/data sys-toolkit img-convert jpg --quality 80
+
+# 轉為 webp 並縮放為 50%
+docker run --rm -v ${PWD}:/data sys-toolkit img-convert webp --resize 50%
+
+# 轉為 jpg 並限定最大寬度 1920px
+docker run --rm -v ${PWD}:/data sys-toolkit img-convert jpg --resize 1920x
 ```
 
 | 參數              | 說明                                           | 預設           |
@@ -134,6 +140,7 @@ docker run --rm -v ${PWD}:/data sys-toolkit img-convert jpg --quality 80
 | `<target-format>` | 目標格式：png, jpg, webp, avif, bmp, tiff, gif | 必填           |
 | `--keep`          | 轉換後保留原檔                                 | 否（刪除原檔） |
 | `--quality <n>`   | 輸出品質 1-100                                 | 90             |
+| `--resize <spec>` | 縮放尺寸（例: 50%, 1920x, x1080, 800x600）     | 無（不縮放）   |
 
 > 注意：預設行為會刪除原檔，請確認後再執行。加 `--keep` 可保留原檔。
 
