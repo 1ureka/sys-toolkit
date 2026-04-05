@@ -11,7 +11,7 @@
 | `extract`      | 快速解壓縮，支援 zip、7z、tar、gz、rar 等常見格式，可批次解壓至各自子目錄 |
 | `img-convert`  | 將目錄下的圖像檔案批次轉換為指定格式（png、jpg、webp、avif 等）           |
 | `video-frames` | 從影片中均勻擷取指定數量的幀，可批次處理並指定統一輸出目錄與命名前墜      |
-| `yt-dlp`       | yt-dlp 包裝，用來下載公開影音資源，不支援需登入的情況                     |
+| `yt-dlp`       | yt-dlp 包裝，用來下載公開影音資源，支援批次下載與清單文件                 |
 
 ## 安裝與使用
 
@@ -191,11 +191,20 @@ docker run --rm -v ${PWD}:/data sys-toolkit video-frames clip.mp4 -n 8 --format 
 
 ## yt-dlp — 下載公開影音資源
 
-yt-dlp 的簡單包裝，僅用於下載公開資源。
+yt-dlp 的簡單包裝，僅用於下載公開資源。支援多 URL 批次下載與清單文件。
 
 ```powershell
 # 下載影片（最佳畫質，合併為 mp4）
 docker run --rm -v ${PWD}:/data sys-toolkit yt-dlp "https://example.com/video"
+
+# 多個 URL 以逗號分隔
+docker run --rm -v ${PWD}:/data sys-toolkit yt-dlp "url1,url2,url3"
+
+# 從清單文件讀取 URL（每行一個，# 開頭為註解）
+docker run --rm -v ${PWD}:/data sys-toolkit yt-dlp "@list.txt"
+
+# 混用 URL 與清單文件
+docker run --rm -v ${PWD}:/data sys-toolkit yt-dlp "url1,@list.txt,url2"
 
 # 僅下載音訊並轉為 mp3
 docker run --rm -v ${PWD}:/data sys-toolkit yt-dlp "https://example.com/video" --audio-only
@@ -204,11 +213,11 @@ docker run --rm -v ${PWD}:/data sys-toolkit yt-dlp "https://example.com/video" -
 docker run --rm -v ${PWD}:/data sys-toolkit yt-dlp "https://example.com/video" --output "my_video.%(ext)s"
 ```
 
-| 參數                  | 說明                 | 預設                       |
-| --------------------- | -------------------- | -------------------------- |
-| `<url>`               | 目標 URL             | 必填                       |
-| `--audio-only`        | 僅下載音訊並轉為 mp3 | 否                         |
-| `--format <id>`       | 指定 yt-dlp format   | 參考 [yt-dlp.sh](./scripts/yt-dlp.sh) |
-| `--output <template>` | 輸出檔名模版         | `%(title)s.%(ext)s`        |
+| 參數                     | 說明                                             | 預設                                  |
+| ------------------------ | ------------------------------------------------ | ------------------------------------- |
+| `<url[,url2,@file,...]>` | 目標 URL，多個以逗號分隔；`@file` 從清單文件讀取 | 必填                                  |
+| `--audio-only`           | 僅下載音訊並轉為 mp3                             | 否                                    |
+| `--format <id>`          | 指定 yt-dlp format                               | 參考 [yt-dlp.sh](./scripts/yt-dlp.sh) |
+| `--output <template>`    | 輸出檔名模版                                     | `%(title).80s.%(ext)s`                |
 
 > 注意：此工具不支援需要登入或 cookie 的內容，僅適用於公開資源。
