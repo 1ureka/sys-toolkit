@@ -9,6 +9,7 @@ usage() {
   echo "  empty-dirs    檢查空資料夾"
   echo "  extract       快速解壓縮"
   echo "  img-convert   圖像格式轉換"
+  echo "  img-meta      圖片元資料提取"
   echo "  video-frames  影像擷取"
   echo "  yt-dlp        下載公開影音資源"
   echo ""
@@ -27,6 +28,7 @@ run_interactive_menu() {
     "empty-dirs   — 檢查空資料夾" \
     "extract      — 快速解壓縮" \
     "img-convert  — 圖像格式轉換" \
+    "img-meta     — 圖片元資料提取" \
     "video-frames — 影像擷取" \
     "yt-dlp       — 下載公開影音資源")
 
@@ -40,6 +42,7 @@ case "${1:-}" in
   empty-dirs)    shift; exec /scripts/empty-dirs.sh "$@" ;;
   extract)       shift; exec /scripts/extract.sh "$@" ;;
   img-convert)   shift; exec /scripts/img-convert.sh "$@" ;;
+  img-meta)      shift; exec /scripts/img-meta.sh "$@" ;;
   video-frames)  shift; exec /scripts/video-frames.sh "$@" ;;
   yt-dlp)        shift; exec /scripts/yt-dlp.sh "$@" ;;
   *)             echo "未知指令: $1"; usage; exit 1 ;;

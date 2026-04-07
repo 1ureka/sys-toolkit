@@ -10,6 +10,7 @@
 | `empty-dirs`   | 檢查空資料夾。git 切換分支後有時會殘留空資料夾，可用此工具檢查並清理      |
 | `extract`      | 快速解壓縮，支援 zip、7z、tar、gz、rar 等常見格式，可批次解壓至各自子目錄 |
 | `img-convert`  | 將目錄下的圖像檔案批次轉換為指定格式（png、jpg、webp、avif 等）           |
+| `img-meta`     | 提取圖片元資料並輸出為 JSON，可用於讀取 AI 生成圖片的提示詞與生成參數     |
 | `video-frames` | 從影片中均勻擷取指定數量的幀，可批次處理並指定統一輸出目錄與命名前墜      |
 | `yt-dlp`       | yt-dlp 包裝，用來下載公開影音資源，支援批次下載與清單文件                 |
 
@@ -143,6 +144,39 @@ docker run --rm -v ${PWD}:/data sys-toolkit img-convert jpg --resize 1920x
 | `--resize <spec>` | 縮放尺寸（例: 50%, 1920x, x1080, 800x600）     | 無（不縮放）   |
 
 > 注意：預設行為會刪除原檔，請確認後再執行。加 `--keep` 可保留原檔。
+
+---
+
+## img-meta — 圖片元資料提取
+
+提取圖片的嵌入式元資料（EXIF、PNG text chunks、XMP 等），輸出為 JSON 格式。
+
+```powershell
+# 提取單張圖片的元資料
+docker run --rm -v ${PWD}:/data sys-toolkit img-meta image.png
+
+# 格式化 JSON 輸出
+docker run --rm -v ${PWD}:/data sys-toolkit img-meta image.png --pretty
+
+# 批量提取所有圖片並輸出到檔案
+docker run --rm -v ${PWD}:/data sys-toolkit img-meta all --output metadata.json --pretty
+
+# 批量提取並輸出到終端
+docker run --rm -v ${PWD}:/data sys-toolkit img-meta all --pretty
+```
+
+| 參數              | 說明                       | 預設             |
+| ----------------- | -------------------------- | ---------------- |
+| `<file\|all>`     | 指定圖片或批次處理所有圖片 | 必填             |
+| `--output <file>` | 輸出到 JSON 檔案           | 無（輸出到終端） |
+| `--pretty`        | 格式化 JSON 輸出           | 否（壓縮）       |
+
+**支援的圖片格式：** png, jpg, jpeg, webp, avif, bmp, tiff, gif
+
+**JSON 輸出包含：**
+
+- 基本資訊（格式、尺寸、色彩空間、檔案大小）
+- 所有嵌入屬性（EXIF、PNG text chunks、XMP 等）
 
 ---
 
