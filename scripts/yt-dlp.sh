@@ -71,7 +71,8 @@ resolve_urls() {
       fi
       while IFS= read -r line || [[ -n "$line" ]]; do
         line="${line%%#*}"      # 移除註解
-        line="${line// /}"      # 移除空白
+        line="${line#"${line%%[![:space:]]*}"}"   # trim 前導空白
+        line="${line%"${line##*[![:space:]]}"}"
         [[ -n "$line" ]] && URLS+=("$line")
       done < "$file"
     else
