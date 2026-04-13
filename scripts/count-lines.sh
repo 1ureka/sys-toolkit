@@ -19,14 +19,18 @@ interactive() {
 
   local preset
   preset=$(gum choose --header "選擇預設組合" \
-    "Web 前端    — js,ts,jsx,tsx,css,html  排除 node_modules,dist,.git" \
+    "React       — js,ts,jsx,tsx,css,html  排除 node_modules,dist,.git" \
+    "Svelte      — js,ts,svelte,css,html   排除 node_modules,dist,.git" \
     "Python      — py                      排除 __pycache__,.git,venv" \
     "全部檔案    — 不篩選副檔名            排除 .git" \
     "其他        — 自訂所有選項")
 
   case "$preset" in
-    Web*)
+    React*)
       args=(--ext "js,ts,jsx,tsx,css,html" --exclude "node_modules,dist,.git")
+      ;;
+    Svelte*)
+      args=(--ext "js,ts,svelte,css,html" --exclude "node_modules,dist,.git")
       ;;
     Python*)
       args=(--ext "py" --exclude "__pycache__,.git,venv")
@@ -98,12 +102,6 @@ if [[ ${#EXCLUDES[@]} -gt 0 ]]; then
 fi
 FIND_CMD+=(-type f -print)
 
-# Extension filter flag
-EXT_PATTERN=""
-if [[ -n "$EXT" ]]; then
-  EXT_PATTERN="yes"
-fi
-
 # Collect files and count lines
 declare -A ext_files ext_lines
 TOTAL_FILES=0
@@ -112,7 +110,7 @@ RESULTS=""
 
 while IFS= read -r file; do
   # Extension filter
-  if [[ -n "$EXT_PATTERN" ]]; then
+  if [[ -n "$EXT" ]]; then
     file_lower=$(echo "$file" | tr '[:upper:]' '[:lower:]')
     matched=false
     IFS=',' read -ra EXTS <<< "$EXT"
