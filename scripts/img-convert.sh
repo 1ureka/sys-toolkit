@@ -7,7 +7,7 @@ usage() {
   echo "用法: sys-toolkit img-convert <target-format> [OPTIONS]"
   echo ""
   echo "參數:"
-  echo "  <target-format>  目標格式: png, jpg, webp, avif, bmp, tiff, gif"
+  echo "  <target-format>  目標格式: png, jpg, jpeg, webp, avif, bmp, tiff, gif"
   echo ""
   echo "選項:"
   echo "  --keep           轉換後保留原檔 (預設刪除原檔)"

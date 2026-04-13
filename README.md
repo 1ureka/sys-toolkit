@@ -138,7 +138,7 @@ docker run --rm -v ${PWD}:/data sys-toolkit img-convert jpg --resize 1920x
 
 | 參數              | 說明                                           | 預設           |
 | ----------------- | ---------------------------------------------- | -------------- |
-| `<target-format>` | 目標格式：png, jpg, webp, avif, bmp, tiff, gif | 必填           |
+| `<target-format>` | 目標格式：png, jpg, jpeg, webp, avif, bmp, tiff, gif | 必填           |
 | `--keep`          | 轉換後保留原檔                                 | 否（刪除原檔） |
 | `--quality <n>`   | 輸出品質 1-100                                 | 90             |
 | `--resize <spec>` | 縮放尺寸（例: 50%, 1920x, x1080, 800x600）     | 無（不縮放）   |
@@ -171,7 +171,7 @@ docker run --rm -v ${PWD}:/data sys-toolkit img-meta all --pretty
 | `--output <file>` | 輸出到 JSON 檔案           | 無（輸出到終端） |
 | `--pretty`        | 格式化 JSON 輸出           | 否（壓縮）       |
 
-**支援的圖片格式：** png, jpg, jpeg, webp, avif, bmp, tiff, gif
+**支援的圖片格式：** png, jpg, jpeg, webp, avif, bmp, tiff, tif, gif
 
 **JSON 輸出包含：**
 
