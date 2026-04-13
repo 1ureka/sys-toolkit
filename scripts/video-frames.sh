@@ -82,9 +82,15 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+# Validate format
+if [[ "$FORMAT" != "jpg" && "$FORMAT" != "png" ]]; then
+  echo "錯誤: --format 僅支援 jpg 或 png"
+  exit 1
+fi
+
 # Quality flag
 QUALITY_FLAG=()
-if [[ "$FORMAT" == "jpg" || "$FORMAT" == "jpeg" ]]; then
+if [[ "$FORMAT" == "jpg" ]]; then
   QUALITY_FLAG=(-q:v 2)
 fi
 
