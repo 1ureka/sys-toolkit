@@ -30,7 +30,7 @@ interactive() {
       args=(--ext "js,ts,jsx,tsx,css,html" --exclude "node_modules,dist,.git")
       ;;
     Svelte*)
-      args=(--ext "js,ts,svelte,css,html" --exclude "node_modules,dist,.git")
+      args=(--ext "js,ts,svelte,css,html" --exclude "node_modules,dist,.git,.svelte-kit,build")
       ;;
     Python*)
       args=(--ext "py" --exclude "__pycache__,.git,venv")
