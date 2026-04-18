@@ -11,6 +11,7 @@
 | `extract`      | 快速解壓縮，支援 zip、7z、tar、gz、rar 等常見格式，可批次解壓至各自子目錄 |
 | `img-convert`  | 將目錄下的圖像檔案批次轉換為指定格式（png、jpg、webp、avif 等）           |
 | `img-meta`     | 提取圖片元資料並輸出為 JSON，可用於讀取 AI 生成圖片的提示詞與生成參數     |
+| `img-shrink`   | 對超過檔案大小閥值的圖片反覆縮放 50%，直到低於閥值                  |
 | `video-frames` | 從影片中均勻擷取指定數量的幀，可批次處理並指定統一輸出目錄與命名前墜      |
 | `yt-dlp`       | yt-dlp 包裝，用來下載公開影音資源，支援批次下載與清單文件                 |
 
@@ -177,6 +178,32 @@ docker run --rm -v ${PWD}:/data sys-toolkit img-meta all --pretty
 
 - 基本資訊（格式、尺寸、色彩空間、檔案大小）
 - 所有嵌入屬性（EXIF、PNG text chunks、XMP 等）
+
+---
+
+## img-shrink — 圖片依檔案大小縮小
+
+對當前目錄下的圖片（直接子檔案，不遞迴），若檔案大小超過閥值，反覆縮放 50% 直到低於閥值。
+
+```powershell
+# 將超過 1M 的圖片縮小（預設閥值，覆蓋原檔）
+docker run --rm -v ${PWD}:/data sys-toolkit img-shrink
+
+# 設定閥值為 500K
+docker run --rm -v ${PWD}:/data sys-toolkit img-shrink --max-size 500K
+
+# 保留原檔，縮小版存為 filename_shrink.ext
+docker run --rm -v ${PWD}:/data sys-toolkit img-shrink --max-size 2M --keep
+```
+
+| 參數               | 說明                                        | 預設             |
+| ------------------- | ------------------------------------------- | ---------------- |
+| `--max-size <size>` | 檔案大小閥值，例: 500K, 2M, 1G         | 1M               |
+| `--keep`            | 保留原檔，縮小版另存為 `_shrink` 後綴 | 否（覆蓋原檔） |
+
+> 注意：預設行為會覆蓋原檔，請確認後再執行。加 `--keep` 可保留原檔。
+
+**支援的圖片格式：** png, jpg, jpeg, webp, avif, bmp, tiff, tif, gif
 
 ---
 
